@@ -6,5 +6,7 @@
       "outDir": "./lib",
       "composite": true
     },
-    "references": []
+    "references": [],
+    "exclude": ["node_modules", "dist", "tests", "excel.browser.js"],
+    "typeRoots": ["node_modules/@types", "src/types"], // 要包含的类型声明文件路径列表
 }

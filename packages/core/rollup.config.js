@@ -1,8 +1,9 @@
 import path, {dirname} from 'node:path';
-import {babel} from '@rollup/plugin-babel';
+// import {babel} from '@rollup/plugin-babel';
 import typescript from 'rollup-plugin-typescript2';
 import {nodeResolve} from '@rollup/plugin-node-resolve';
 import {fileURLToPath} from 'node:url';
+import replace from '@rollup/plugin-replace';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,7 +19,7 @@ export default {
     output: {
         file: './dist/umd/index.js',
         format: 'umd',
-        name: 'bridge'
+        name: 'editor'
     },
     onwarn: function (warning) {
         if (warning.code === 'THIS_IS_UNDEFINED') {
@@ -30,6 +31,10 @@ export default {
         typescript({
             useTsconfigDeclarationDir: true,
             tsconfig: './tsconfig.json'
+        }),
+        replace({
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+            preventAssignment: true
         })
     ]
 };

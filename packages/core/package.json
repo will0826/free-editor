@@ -5,12 +5,19 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:umd": "rollup -c"
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "slate": "^0.100.0"
+    "is-hotkey": "^0.2.0",
+    "slate": "^0.100.0",
+    "slim-js": "^5.0.10",
+    "tslib": "^2.6.2"
+  },
+  "devDependencies": {
+    "@types/is-hotkey": "^0.1.8"
   }
 }
