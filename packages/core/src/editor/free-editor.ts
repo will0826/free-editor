@@ -25,7 +25,7 @@ export const FreeEditor = {
      */
 
     getWindow(editor: IEditor): Window {
-        const window = EDITOR_TO_WINDOW.get(editor);
+        const window = editor.window;
         if (!window) {
             throw new Error('Unable to find a host window element for this editor');
         }
@@ -183,7 +183,7 @@ export const FreeEditor = {
         }
 
         return (
-            targetEl.closest(`[data-slate-editor]`) === editorEl &&
+            targetEl.closest(`[data-free-editor]`) === editorEl &&
             (!editable || targetEl.isContentEditable
                 ? true
                 : (typeof targetEl.isContentEditable === 'boolean' && // isContentEditable exists only on HTMLElement, and on other nodes it will be undefined
@@ -208,7 +208,11 @@ export const FreeEditor = {
     insertFragmentData(editor: IEditor, data: DataTransfer): boolean {
         return editor.insertFragmentData(data);
     },
-
+    isTargetInsideVoid(editor: IEditor, target: EventTarget | null): boolean {
+        const slateNode = FreeEditor.hasTarget(editor, target) && FreeEditor.toSlateNode(editor, target);
+        if (!slateNode) return slateNode;
+        return Editor.isVoid(editor, slateNode as BaseElement);
+    },
     /**
      * Insert text data from a `DataTransfer` into the editor.
      */
@@ -231,7 +235,7 @@ export const FreeEditor = {
 
     toDOMNode(editor: IEditor, node: Node): HTMLElement {
         const KEY_TO_ELEMENT = KEY2ELEMENT.get(editor);
-        const domNode = Editor.isEditor(node) ? NODE2ELEMENT.get(editor) : KEY_TO_ELEMENT?.get(FreeEditor.findKey(editor, node));
+        const domNode = Editor.isEditor(node) ? editor.element : KEY_TO_ELEMENT?.get(FreeEditor.findKey(editor, node));
 
         if (!domNode) {
             throw new Error(`Cannot resolve a DOM node from Slate node: ${Scrubber.stringify(node)}`);
@@ -460,7 +464,6 @@ export const FreeEditor = {
             // can determine what the offset relative to the text node is.
             if (leafNode) {
                 textNode = leafNode.closest('[data-slate-node="text"]');
-
                 if (textNode) {
                     const window = FreeEditor.getWindow(editor);
                     const range = window.document.createRange();
@@ -568,6 +571,7 @@ export const FreeEditor = {
         // the select event fires twice, once for the old editor's `element`
         // first, and then afterwards for the correct `element`. (2017/03/03)
         const slateNode = FreeEditor.toSlateNode(editor, textNode!);
+        console.log('gasl,;mkgaslm;gaksnlgsam;knj');
         const path = FreeEditor.findPath(editor, slateNode);
         return {path, offset} as T extends true ? Point | null : Point;
     },
@@ -591,7 +595,6 @@ export const FreeEditor = {
         let focusNode;
         let focusOffset;
         let isCollapsed;
-
         if (el) {
             if (isDOMSelection(domRange)) {
                 anchorNode = domRange.anchorNode;
@@ -615,7 +618,7 @@ export const FreeEditor = {
                 isCollapsed = domRange.collapsed;
             }
         }
-
+        console.log(anchorNode, focusNode, anchorOffset, focusOffset);
         if (anchorNode == null || focusNode == null || anchorOffset == null || focusOffset == null) {
             throw new Error(`Cannot resolve a Slate range from DOM range: ${domRange}`);
         }
